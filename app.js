@@ -15,7 +15,7 @@ const helmet=require('helmet');
 const xss=require('xss-clean');
 const sanitize=require('express-mongo-sanitize');
 const hpp=require('hpp');
-const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser');
 const reviewRouter = require('./routers/reviewrouter');
 // const hpp = require('hpp');
 const limiter=limit({
@@ -46,7 +46,7 @@ app.use(xss());
 app.use(hpp({
     whitelist:['duration','ratingsQuantity','ratingsAverage','maxGroupSize','difficulty','price'],
 }));
-app.use(cookieParser);   //read a cookie.
+// app.use(cookieParser);   //read a cookie.
 app.use(express.static('./public',))
 app.use((req,res,next)=>{
     req.requestAtTime=new Date().toISOString();
