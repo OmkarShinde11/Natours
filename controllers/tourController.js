@@ -133,7 +133,7 @@ const getSingleTour = getOne(Tour, { path: 'reviews' });
 
 const multerStorage = multer.memoryStorage();
 const multerFilter = (req, file, cb) => {
-    console.log(file);
+    // console.log(file);
     if (file.mimetype.startsWith('image')) {
         cb(null, true);
     }
@@ -157,7 +157,7 @@ const uploadTourImages = upload.fields(
 )
 
 const processTourImages = catchAsync(async (req, res, next) => {
-    console.log(req.body, req.files);
+    // console.log(req.body, req.files);
     const coverExt = req.files.imageCover[0].mimetype.split('/')[1];
     const coverFilename = `tours-${req.params.id}-${Date.now()}-cover.${coverExt}`;
     //1) processing an imageCover.
@@ -261,7 +261,7 @@ const getTourStats = catchAsync(async (req, res) => {
 const getmonthlyPlan = catchAsync(async (req, res) => {
     // try{
     const year = req.params.year;
-    console.log(year)
+    // console.log(year)
     const monthData = await Tour.aggregate([
         {
             $unwind: '$startDates'
@@ -327,7 +327,7 @@ const getToursWithinLocation = catchAsync(async (req, res, next) => {
     const { distance, center, unit } = req.params;
     const [lat, lng] = center.split(',');
     const radius = unit === "mi" ? distance / 3963.2 : distance / 6378.1;
-    console.log("radius", radius);
+    // console.log("radius", radius);
     if (!lng && !lat) {
         return next(new AppError('Please provide a distance', 400));
     }
@@ -379,7 +379,7 @@ const getAllToursFromCertainLocation = catchAsync(async (req, res, next) => {
 
 const getTotalCounts = catchAsync(async (req, res, next) => {
     const count = await Tour.find({});
-    console.log(count);
+    // console.log(count);
     res.status(200).json({
         status: 'Successss',
         total_Count: count.length,

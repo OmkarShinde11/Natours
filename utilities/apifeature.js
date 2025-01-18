@@ -6,7 +6,7 @@ class APIFeature{
 
     fliter(){
         let queryObj={...this.queryString};
-        console.log(queryObj);
+        // console.log(queryObj);
 
         //excluding the page sort limit fields
         const optionArray=['page','sort','limit','fields'];
@@ -16,7 +16,7 @@ class APIFeature{
         // why we add this code beacuse we need this { difficulty: 'easy', duration: { '$gte': '5' } } query, but from req.query.params we get object like { difficulty: 'easy', duration: { '$gte': '5' } }
         let queryStr=JSON.stringify(queryObj);
         queryStr=queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match =>`$${match}`);
-        console.log(JSON.parse(queryStr));
+        // console.log(JSON.parse(queryStr));
         this.query.find(JSON.parse(queryStr));
 
         return this;
@@ -25,7 +25,7 @@ class APIFeature{
     sort(){
         if(this.queryString.sort){
             const sortBy=this.queryString.sort.split(',').join(' ');
-            console.log(sortBy);
+            // console.log(sortBy);
             this.query=this.query.sort(sortBy);
         }
         else{
@@ -37,7 +37,7 @@ class APIFeature{
     selectFields(){
         if(this.queryString.fields){
             const fields=this.queryString.fields.split(',').join(' ');
-            console.log(fields);
+            // console.log(fields);
             this.query=this.query.select(fields);
         }
         else{
@@ -50,7 +50,7 @@ class APIFeature{
         let page=Number(this.queryString.page) || 1;
         let limit=Number(this.queryString.limit) || 100;
         let skip=(page-1) * limit;
-        console.log(skip)
+        // console.log(skip)
         this.query=this.query.skip(skip).limit(limit);
         return this;
     }

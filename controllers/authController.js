@@ -11,7 +11,7 @@ const createCookie={
     httpOnly:true
 }
 const generateToken= (id)=>{
-    console.log(process.env.EXPIRES);
+    // console.log(process.env.EXPIRES);
     return jwt.sign({id:id},process.env.AUTH_SECRET_KEY,{expiresIn:process.env.EXPIRES});
 }
 const createSendToken=(user,statusCode,res)=>{
@@ -56,7 +56,7 @@ const signUpUser=catchAsync(async (req,res,next)=>{
 const loginUser=catchAsync (async (req,res,next)=>{
     // check email and password is enter by an user;
     const {userEmail,password}=req.body;
-    console.log(userEmail,password);
+    // console.log(userEmail,password);
     if(!userEmail || !password){
         return next(new AppError('please provide email and password',400));
     }
@@ -67,7 +67,7 @@ const loginUser=catchAsync (async (req,res,next)=>{
     //check the password which user enters and in db is same or not
     const correctPassword=await user.correctPassword(password,user.password);
     if(!correctPassword) return next(new AppError('Invalid Password',401));
-    console.log(user,correctPassword);
+    // console.log(user,correctPassword);
     // generate a token
     createSendToken(user,200,res);
     // const token=generateToken(user._id);
@@ -87,7 +87,7 @@ const verifyUser=catchAsync(async(req,res,next)=>{
 
     //verify a token 
     let decoded=await jwt.verify(token,process.env.AUTH_SECRET_KEY);
-    console.log(decoded);
+    // console.log(decoded);
 
     //check the user exist
     let currentUser=await User.findById(decoded.id);
@@ -117,12 +117,12 @@ const forgotPassword=catchAsync(async (req,res,next)=>{
     }
     //generate random token
     const resetToken=user.createPasswordToken();
-    console.log('resetToken',resetToken);
+    // console.log('resetToken',resetToken);
     await user.save({ validateBeforeSave: false })
     //send a email
 
     const resetURL=`${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`;
-    console.log(resetURL);
+    // console.log(resetURL);
 
     const message=`To forgot a password click on below link\n ${resetURL}\n if you didn't then ignore this mail`;
 
@@ -159,7 +159,7 @@ const resetPassword=catchAsync(async(req,res,next)=>{
     // check if password is expired or not if its not then set a new password for that
     const encToken=crypto.createHash('sha256').update(req.params.token).digest('hex');
     const user=await User.findOne({passwordResetToken:encToken,passwordExpiresIn:{$gt:Date.now()}});
-    console.log(user);
+    // console.log(user);
     if(!user){
        return next(new AppError('User not found',404));
     }

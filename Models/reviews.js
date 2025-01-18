@@ -53,7 +53,7 @@ reviewsSchema.pre(/^find/,function(next){
 
 reviewsSchema.statics.calcStatc=async function(tourId){
     //here we get a tourid
-    console.log('tourID',tourId);
+    // console.log('tourID',tourId);
     // do aggregation an get averageRating and numRating,
     const stats=await this.aggregate([
         {
@@ -67,7 +67,7 @@ reviewsSchema.statics.calcStatc=async function(tourId){
             }
         }
     ]);
-    console.log('stats',stats);
+    // console.log('stats',stats);
     // update in tour document.
     if(stats && stats.length>0){
         await Tour.findByIdAndUpdate(tourId,{

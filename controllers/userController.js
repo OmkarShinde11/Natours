@@ -66,7 +66,7 @@ const filterUserData=(body,...args)=>{
             newObj[el]=body[el];
         }
     })
-    console.log(newObj);
+    // console.log(newObj);
     return newObj;
 }
 
@@ -78,8 +78,8 @@ const checkObjectLength=(obj)=>{
 }
 
 const updateMe=catchAsync(async(req,res,next)=>{
-    console.log(req.body);
-    console.log(req.file);
+    // console.log(req.body);
+    // console.log(req.file);
     //if there is like password and passwordConfirm in req body then create a error
     if(req.body.password || req.body.passwordConfirm){
         return next(new AppError('This route is for just updating a user a data.To update a password then use updatepassword route',400))
@@ -148,13 +148,13 @@ const updateUser=updateOne(User);
 const validUser=(req,res,next,val)=>{
     let checked=userdata.find(el=>el._id==val);
     if(!checked){
-        console.log('Param middleware called for invalid id')
+        // console.log('Param middleware called for invalid id')
         return res.status(404).json({
             status:'fail',
             message:'Invalid id'
         })
     }
-    console.log('param middleware called for valid user')
+    // console.log('param middleware called for valid user')
     next();
 }
 

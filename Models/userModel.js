@@ -92,7 +92,7 @@ userSchema.methods.correctPassword=async function(userEnterPassword,dbPassword){
 userSchema.methods.checkPasswordAfter=function(jwtTimestamp){
     if(this.passwordChangedAt){
         const changedPassword=parseInt(this.passwordChangedAt.getTime()/1000);
-        console.log(changedPassword,jwtTimestamp);
+        // console.log(changedPassword,jwtTimestamp);
         return changedPassword > jwtTimestamp;
     }
     return false;
