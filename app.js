@@ -80,8 +80,8 @@ mongoose.connect(db,{
     console.log('DB connection Successfully');
 })
 
-const server=app.listen('9000',()=>{
-    console.log('Port is listening on 9000');
+const server=app.listen(process.env.PORT_NUMBER,()=>{
+    console.log(`Port is listening on ${process.env.PORT_NUMBER}`);
 });
 
 process.on('unhandledRejection',(err)=>{
