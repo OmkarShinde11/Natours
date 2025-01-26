@@ -4,6 +4,7 @@ const mongoose=require('mongoose');
 const APPError=require('./utilities/appError');
 dotenv.config({path:'./config.env'})
 const app=express();
+const bodyParser=require('body-parser');
 const morgan=require('morgan');
 const tourRouter=require('./routers/tourrouter');
 const userRouter=require('./routers/userrouter');
@@ -27,6 +28,7 @@ const limiter=limit({
 app.use('/api',limiter);
 app.use(helmet());
 app.use(cors());
+app.use(bodyParser.json())
 process.on('uncaughtException',(err)=>{
     console.log(err.name,err.message);
     console.log('Unhandle Rejection occured');

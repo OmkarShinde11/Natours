@@ -1,6 +1,6 @@
 const express=require('express');
 const {getAllUser,createUser, updateUser,deleteUser,getSingleUSer,validUser,getAllDomain,updateMe, deleteOnly, getMe, uploaUserPhoto, imageProcess}=require('../controllers/userController');
-const {signUpUser,loginUser,forgotPassword,resetPassword,updatePassword,verifyUser, restricTo,}=require('../controllers/authController');
+const {signUpUser,loginUser,forgotPassword,resetPassword,updatePassword,verifyUser, restricTo,setUp2Fa,verify2Fa}=require('../controllers/authController');
 // const fs=require('fs');
 
 // let userdata=fs.readFileSync('./dev-data/data/users.json','utf-8');
@@ -10,6 +10,8 @@ const userRouter=express.Router();
 
 userRouter.post('/SignUp',signUpUser);
 userRouter.post('/login',loginUser);
+userRouter.post('/setup2Fa/:userEmail',setUp2Fa);
+userRouter.post('/verifyOTP',verify2Fa)
 userRouter.post('/forgotPassword',forgotPassword);
 userRouter.patch('/resetPassword/:token',resetPassword)
 

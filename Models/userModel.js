@@ -59,6 +59,10 @@ const userSchema=new mongoose.Schema({
         type:Boolean,
         default:true,
         select:false
+    },
+    authenticateSecretKey:{
+        type:String,
+        select:false,
     }
 })
 // Note  in middleware we can't use arrow function because if we use arrow function we cant use this.

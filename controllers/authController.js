@@ -4,6 +4,9 @@ const catchAsync=require('../utilities/catchAsync');
 const AppError = require('../utilities/appError');
 // const sendEmail=require('../utilities/email');
 const Email=require('../utilities/email');
+const speakeasy = require('speakeasy');
+const qrcode=require('qrcode');
+
 
 const crypto = require('crypto');
 const createCookie={
@@ -61,21 +64,83 @@ const loginUser=catchAsync (async (req,res,next)=>{
         return next(new AppError('please provide email and password',400));
     }
     //check user is there in db or not
-    const user=await User.findOne({email:userEmail}).select('+password'); //here in model we declare select:false to password field so to get that we use .select('field-name)
+    const user=await User.findOne({email:userEmail}).select('+password +authenticateSecretKey'); //here in model we declare select:false to password field so to get that we use .select('field-name)
     if(!user) return next(new AppError('Incorrect email',401));
 
     //check the password which user enters and in db is same or not
     const correctPassword=await user.correctPassword(password,user.password);
     if(!correctPassword) return next(new AppError('Invalid Password',401));
     // console.log(user,correctPassword);
+
+    // check 2FA is there for user
+    if(!user.authenticateSecretKey){
+        return res.status(200).json({
+            status:'fail',
+            message:'2 Fa setup is required.'
+        })
+    }
+    else{
+        res.status(200).json({
+            status:'Success',
+            message:'Proceed for 2 factor authentication'
+        })
+    }
     // generate a token
-    createSendToken(user,200,res);
+    // createSendToken(user,200,res);
     // const token=generateToken(user._id);
     // res.status(200).json({
     //     status:'success',
     //     token:token,
     // })
 });
+
+const setUp2Fa=catchAsync(async(req,res,next)=>{
+    const {userEmail}=req.params;
+    const user=await User.findOne({email:userEmail});
+    if(!user){
+        return next(new AppError('User not found',400));
+    }
+    // generate an secret key
+    const secret=speakeasy.generateSecret({
+        name:`Natours-${user.name}`,
+    });
+    // console.log('secret',secret.ascii);
+    user.authenticateSecretKey=secret.base32;
+    await user.save({ validateBeforeSave: false });
+
+    // generate an qr code.
+    const dataURL=await qrcode.toDataURL(secret.otpauth_url);
+    if(!dataURL){
+        return next(new AppError('Failed to create qrCode',500))
+    }
+    // console.log(dataURL);
+    res.status(200).json({
+        status:'Success',
+        dataURL,
+    })
+});
+
+const verify2Fa=catchAsync(async(req,res,next)=>{
+    const {authenticateCode,useremail}=req.body;
+    if(!authenticateCode){
+        return (next(new AppError('please provide 2factor otp',400)));
+    }
+    const user=await User.findOne({email:useremail}).select('+authenticateSecretKey');
+    if(!user){
+        return next(new AppError('User Not Found',400));
+    }
+    // check token
+    const isValid=speakeasy.totp.verify({
+        secret:user.authenticateSecretKey,
+        encoding:"base32",
+        token:authenticateCode,
+        window:1
+    })
+    if(!isValid){
+        return next(new AppError('Provide valid OTP',400))
+    }
+    createSendToken(user,200,res);
+})
 
 const verifyUser=catchAsync(async(req,res,next)=>{
 //getting a token
@@ -202,5 +267,7 @@ module.exports={
     restricTo,
     forgotPassword,
     resetPassword,
-    updatePassword
+    updatePassword,
+    setUp2Fa,
+    verify2Fa,
 }
